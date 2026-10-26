@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 智能菜谱推荐系统</title>
+    <style>
+        /* CSS 样式部分 - 负责美观和排版 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #3498db;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .result-box {
+            display: none; /* 默认隐藏，生成后显示 */
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9fbfd;
+            border-left: 5px solid #3498db;
+            border-radius: 4px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .result-box h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .result-box p {
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        /* 加载动画 */
+        .loader {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 响应式设计：适配手机端 */
+        @media (max-width: 480px) {
+            .input-group {
+                flex-direction: column;
+            }
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🍳 AI 智能菜谱推荐</h1>
+        <p class="subtitle">输入你冰箱里的食材，AI 帮你决定今天吃什么</p>
+
+        <div class="input-group">
+            <input type="text" id="ingredientInput" placeholder="例如：鸡蛋, 番茄, 土豆">
+            <button id="generateBtn" onclick="generateRecipe()">生成菜谱</button>
+        </div>
+
+        <div class="loader" id="loader">AI 正在思考中，请稍候...</div>
+
+        <div class="result-box" id="resultBox">
+            <h3 id="recipeTitle">菜谱名称</h3>
+            <p id="recipeIngredients"><strong>所需食材：</strong></p>
+            <p id="recipeSteps"><strong>烹饪步骤：</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript 逻辑部分 - 负责交互功能
+        
+        function generateRecipe() {
+            const input = document.getElementById('ingredientInput').value.trim();
+            const btn = document.getElementById('generateBtn');
+            const loader = document.getElementById('loader');
+            const resultBox = document.getElementById('resultBox');
+
+            // 1. 检查用户是否输入了内容
+            if (!input) {
+                alert("请先输入食材哦！");
+                return;
+            }
+
+            // 2. 显示加载状态，隐藏旧结果
+            btn.disabled = true;
+            btn.innerText = "生成中...";
+            loader.style.display = 'block';
+            resultBox.style.display = 'none';
+
+            // 3. 模拟 AI 请求延迟（1.5秒后返回结果）
+            setTimeout(() => {
+                // 模拟 AI 返回的假数据
+                const recipeName = `特制【${input}】大杂烩`;
+                const steps = `1. 将 ${input} 洗净切块备用。<br>
+                               2. 热锅凉油，放入食材翻炒至断生。<br>
+                               3. 加入适量的盐、生抽和少许水，焖煮3-5分钟。<br>
+                               4. 大火收汁，出锅装盘！`;
+
+                // 4. 将数据填入页面
+                document.getElementById('recipeTitle').innerText = recipeName;
+                document.getElementById('recipeIngredients').innerHTML = `<strong>所需食材：</strong> ${input}、葱姜蒜、调味料`;
+                document.getElementById('recipeSteps').innerHTML = `<strong>烹饪步骤：</strong><br>${steps}`;
+
+                // 5. 恢复按钮状态，显示结果，隐藏加载动画
+                btn.disabled = false;
+                btn.innerText = "生成菜谱";
+                loader.style.display = 'none';
+                resultBox.style.display = 'block';
+            }, 1500); 
+        }
+    </script>
+</body>
+</html>
